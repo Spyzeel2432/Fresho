@@ -1,0 +1,50 @@
+export const CATS = ['Vegetables', 'Fruits', 'Dairy', 'Grains'];
+export const STATUSES = ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'];
+export const FREE_ABOVE = 499, DELIVERY = 40;
+export const money = n => '₹' + Math.round(n).toLocaleString('en-IN');
+export const fee = sub => (sub === 0 || sub >= FREE_ABOVE ? 0 : DELIVERY);
+export const fdate = t => new Date(t).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+export const FARMERS = [
+  { id: 'f1', name: 'Ramesh Patel', farm: 'Patel Organic Farm', place: 'Anand', rating: 4.8, verified: true, since: 2021 },
+  { id: 'f2', name: 'Sita Devi', farm: 'Green Valley Growers', place: 'Vadodara', rating: 4.7, verified: true, since: 2022 },
+  { id: 'f3', name: 'Kiran Desai', farm: 'Desai Orchards', place: 'Navsari', rating: 4.9, verified: true, since: 2020 },
+  { id: 'f4', name: 'Mehta Dairy', farm: 'Mehta Dairy & Poultry', place: 'Anand', rating: 4.9, verified: true, since: 2019 },
+  { id: 'f5', name: 'Arjun Singh', farm: 'Singh Agro', place: 'Rajkot', rating: 4.6, verified: false, since: 2026 },
+];
+
+const P = (id, name, cat, price, unit, fid, stock, type, desc, harvest) => ({ id, name, cat, price, unit, fid, stock, type, desc, harvest });
+export const PRODUCTS = [
+  P(1, 'Vine Tomatoes', 'Vegetables', 48, 'kg', 'f1', 42, 'tomato', 'Firm, vine-ripened tomatoes picked at peak colour. Good for curries, salads and chutneys.', 'Today'),
+  P(2, 'Potatoes', 'Vegetables', 32, 'kg', 'f2', 120, 'potato', 'Clean, medium-sized potatoes with a smooth skin. Stores well for weeks.', 'Yesterday'),
+  P(3, 'Spinach', 'Vegetables', 25, 'bunch', 'f2', 9, 'leaf', 'Tender leaves, harvested in the morning and delivered the same day.', 'Today'),
+  P(4, 'Carrots', 'Vegetables', 56, 'kg', 'f1', 36, 'carrot', 'Sweet, crunchy carrots dug fresh from the field.', 'Yesterday'),
+  P(5, 'Farm Milk', 'Dairy', 62, 'litre', 'f4', 60, 'milk', 'Unprocessed full-cream milk from grass-fed cows, bottled the same morning.', 'Today'),
+  P(6, 'Alphonso Mangoes', 'Fruits', 420, 'kg', 'f3', 24, 'mango', 'Naturally ripened Alphonso with a rich aroma. Graded and hand-packed.', 'Today'),
+  P(7, 'Bananas', 'Fruits', 55, 'dozen', 'f3', 48, 'banana', 'Robusta bananas from Navsari, cut green and ripened naturally.', '2 days ago'),
+  P(8, 'Farm Eggs', 'Dairy', 96, 'dozen', 'f4', 30, 'egg', 'Eggs from free-range hens, collected daily and packed in trays.', 'Today'),
+  P(9, 'Basmati Rice', 'Grains', 118, 'kg', 'f1', 200, 'grain', 'Aged long-grain basmati. Fluffy, aromatic and non-sticky when cooked.', 'Last season'),
+  P(10, 'Red Onions', 'Vegetables', 38, 'kg', 'f2', 85, 'onion', 'Sun-cured red onions with a firm bite and strong flavour.', '3 days ago'),
+  P(11, 'Coriander', 'Vegetables', 20, 'bunch', 'f2', 5, 'leaf', 'Fragrant coriander with roots intact to keep it fresh longer.', 'Today'),
+  P(12, 'Whole Wheat Flour', 'Grains', 46, 'kg', 'f1', 90, 'grain', 'Stone-ground atta from locally grown wheat. No additives.', 'This week'),
+];
+
+const EM = { 'Zeel Patel': 'zeel.patel@example.com' };
+const mk = (id, cust, status, daysAgo, pairs, pay = 'UPI') => {
+  const items = pairs.map(([pid, q]) => { const p = PRODUCTS.find(x => x.id === pid); return { id: pid, name: p.name, price: p.price, unit: p.unit, fid: p.fid, type: p.type, cat: p.cat, q }; });
+  const sub = items.reduce((a, i) => a + i.price * i.q, 0);
+  return { id, cust, email: EM[cust] || cust.toLowerCase().replace(' ', '.') + '@example.com', status, date: Date.now() - daysAgo * 864e5, items, total: sub + fee(sub), pay, addr: { name: cust, phone: '9876543210', line: '24 Sunrise Park, Vastrapur, Ahmedabad', pin: '380015' } };
+};
+export const seedOrders = () => [
+  mk('FR1048', 'Zeel Patel', 'Shipped', 1, [[1, 2], [4, 1], [3, 2]]),
+  mk('FR1043', 'Zeel Patel', 'Delivered', 6, [[5, 4], [8, 1]]),
+  mk('FR1037', 'Zeel Patel', 'Delivered', 14, [[6, 2], [7, 1]], 'Card'),
+  mk('FR1031', 'Zeel Patel', 'Cancelled', 21, [[9, 2]], 'Cash on Delivery'),
+  mk('FR1049', 'Priya Shah', 'Pending', 0, [[1, 3], [2, 4]]),
+  mk('FR1047', 'Neel Mehta', 'Confirmed', 1, [[12, 2], [9, 1]], 'Cash on Delivery'),
+  mk('FR1045', 'Aditi Desai', 'Delivered', 3, [[4, 3], [10, 2]]),
+  mk('FR1041', 'Karan Mehta', 'Delivered', 8, [[1, 5], [11, 4], [3, 3]]),
+];
+export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+export const FARMER_SALES = [21, 24, 22, 29, 31, 28, 35, 37, 39, 43];
+export const GMV = [3.1, 3.4, 3.9, 4.2, 4.8, 5.1, 5.9, 6.4, 7.0, 7.8];
