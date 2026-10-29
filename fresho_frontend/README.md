@@ -90,4 +90,6 @@ The Vercel project hosts the frontend; Render runs the Express API. MongoDB must
 
 In Vercel's project environment variables, set `VITE_API_URL` to `https://<your-render-service>.onrender.com/api`, then redeploy the frontend. If the Vercel domain changes, update `CLIENT_ORIGIN` in Render to match it exactly.
 
+For a safe key/value import template, use `backend/.env.render.example` and replace its placeholders in the hosting dashboard. Do not commit your actual `.env.render` file or real credentials.
+
 The free Render web service can take a while to respond after being idle. Also, only login and registration currently use the API; other screens still use demo/in-memory data until their API integration is completed.
