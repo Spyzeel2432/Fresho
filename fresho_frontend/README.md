@@ -68,3 +68,26 @@ npm.cmd run dev
 ```
 
 The API runs on `http://localhost:5000`. Open `http://localhost:5000/api/health` to confirm that it is available.
+
+## Production deployment (Vercel + Render)
+
+The Vercel project hosts the frontend; Render runs the Express API. MongoDB must be hosted separately, for example with MongoDB Atlas. Push the project to GitHub before connecting either provider.
+
+### Deploy the frontend to Vercel
+
+1. Import the GitHub repository into Vercel.
+2. Set **Root Directory** to `fresho_frontend`. Use the Vite framework preset, build command `npm run build`, and output directory `dist`.
+3. Deploy once to obtain the site's `*.vercel.app` URL. The app can run in demo mode before the API is configured.
+
+### Deploy the API to Render
+
+1. Create a MongoDB database and copy its connection URI.
+2. In Render, create a Blueprint from the GitHub repository and set **Blueprint Path** to `fresho_frontend/render.yaml`.
+3. Provide the `MONGODB_URI` value when prompted. The Blueprint generates `JWT_SECRET`; set `CLIENT_ORIGIN` to the exact Vercel site origin, such as `https://your-site.vercel.app` (no trailing slash).
+4. Deploy the Blueprint and verify `https://<your-render-service>.onrender.com/api/health` returns `{"status":"ok"}`.
+
+### Connect and redeploy
+
+In Vercel's project environment variables, set `VITE_API_URL` to `https://<your-render-service>.onrender.com/api`, then redeploy the frontend. If the Vercel domain changes, update `CLIENT_ORIGIN` in Render to match it exactly.
+
+The free Render web service can take a while to respond after being idle. Also, only login and registration currently use the API; other screens still use demo/in-memory data until their API integration is completed.
