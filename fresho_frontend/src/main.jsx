@@ -24,6 +24,7 @@ const IC = {
   truck: <><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7" /><circle cx="7" cy="18" r="1.5" /><circle cx="17" cy="18" r="1.5" /></>,
   leaf: <><path d="M12 21v-8" /><path d="M12 14c0-4.5-3.2-7-7.5-7 0 4.300 2.800 7 7.500 7Z" /><path d="M12 12c0-3.800 2.500-6.200 7.500-6.200 0 4-2.700 6.200-7.500 6.200Z" /></>,
   close: <path d="M6 6l12 12M18 6 6 18" />,
+  menu: <path d="M4 6h16M4 12h16M4 18h16" />,
   grid: <path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" />,
 };
 const Icon = ({ n, s = 18 }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{IC[n]}</svg>;
