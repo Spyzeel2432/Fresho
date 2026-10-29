@@ -1,0 +1,213 @@
+FRESHO PROJECT - PROFESSOR EXPLANATION GUIDE
+=============================================
+
+1. PROJECT PURPOSE
+------------------
+Fresho is a local farmer marketplace. It allows customers to discover fresh
+products, farmers to manage their products and incoming orders, and an admin
+to moderate the marketplace. The goal is to reduce the gap between local
+farmers and customers.
+
+
+2. TECHNOLOGY STACK
+-------------------
+Frontend
+- React 18: component-based user interface.
+- Vite: fast frontend development server and production build tool.
+- React Router: page navigation using hash routes. Hash routing works well
+  for static hosting because no server rewrite rule is required.
+- CSS: custom responsive design without a UI framework.
+- PWA files: manifest and service worker support installation and basic
+  offline caching in production.
+
+Backend
+- Node.js: JavaScript runtime for the server.
+- Express: REST API framework.
+- MongoDB: database for permanent users, products, orders and reviews.
+- Mongoose: schema validation and MongoDB object modelling.
+- bcryptjs: hashes passwords before they are stored.
+- JSON Web Token (JWT): keeps a logged-in user authenticated securely.
+- CORS: allows the React frontend at port 5173 to call the API at port 5000.
+
+
+3. THE FOUR USER ROLES
+----------------------
+1. Guest (not logged in)
+   - Can view the landing page, role information and public product previews.
+   - Is redirected to login before shopping or accessing dashboards.
+
+2. Customer
+   - Searches and filters local produce.
+   - Adds products to cart and completes the checkout flow.
+   - Chooses delivery address, delivery slot and payment method.
+   - Tracks orders, cancels an eligible pending order, reorders delivered
+     items, saves addresses and leaves ratings/reviews after delivery.
+
+3. Farmer
+   - Has a farmer dashboard with product, order and earnings information.
+   - Adds products, changes stock and manages order progression.
+   - Uses the welfare directory to find official farmer support schemes.
+   - Newly registered farmers are unverified. They cannot publish products
+     until the administrator approves them.
+
+4. Administrator
+   - Views overall marketplace statistics.
+   - Verifies or revokes farmers.
+   - Moderates products and sees all orders.
+   - Is created by the backend seed command; normal users cannot register as
+     administrators.
+
+
+4. FRONTEND IMPLEMENTATION
+--------------------------
+Main frontend files:
+- src/main.jsx: React components, route definitions and current UI state.
+- src/data.js: initial demo products, farmers, orders and other seed data.
+- src/styles.css: custom responsive visual system.
+- src/api.js: common helper for calling the backend API.
+
+Important UX work included:
+- Responsive navigation and mobile menu.
+- Responsive product grids; very small phone screens use one product column.
+- Accessible form labels, focus styles, error messages, keyboard-friendly
+  interactions and reduced-motion support.
+- Cart quantity controls, delivery progress indicator, undo notifications,
+  checkout validation and order tracking timeline.
+- A consistent green agricultural visual identity with product illustrations.
+
+
+5. BACKEND IMPLEMENTATION
+-------------------------
+The backend is in the backend/ folder.
+
+Database models:
+- User: name, email, hashed password, phone, role, farmer profile and
+  verification status.
+- Product: farmer owner, category, price, stock, unit, description and image.
+- Order: customer, ordered item snapshot, address, payment method, totals and
+  order status.
+- Review: product, customer, rating and comment.
+
+Authentication and security:
+- Passwords are hashed with bcryptjs; raw passwords are never stored.
+- Login/register responses return a JWT that expires in 7 days.
+- Protected API endpoints require a Bearer token.
+- Role middleware limits farmer and administrator actions.
+- The API does not allow public registration of administrator accounts.
+- Product editing/deleting verifies that the farmer owns that product.
+- Reviews are allowed only after a customer has a delivered order containing
+  that product.
+
+Order rules implemented by the API:
+- Valid flow: Pending -> Confirmed -> Shipped -> Delivered.
+- Pending and confirmed orders may be cancelled under authorized conditions.
+- Stock is reduced when an order is created.
+- Stock is restored when an order is cancelled.
+- A farmer can update only an order made entirely from that farmer's products.
+  A future version can add per-item delivery status for multi-farmer carts.
+
+
+6. API ENDPOINTS
+----------------
+Health check
+GET  /api/health
+
+Authentication
+POST /api/auth/register
+POST /api/auth/login
+GET  /api/auth/me
+
+Products
+GET    /api/products
+POST   /api/products                 (verified farmer only)
+PATCH  /api/products/:id             (owner farmer or admin)
+DELETE /api/products/:id             (owner farmer or admin)
+
+Orders
+GET   /api/orders                    (role-specific result)
+POST  /api/orders                    (customer only)
+PATCH /api/orders/:id/status
+
+Reviews
+GET  /api/reviews/product/:productId
+POST /api/reviews                    (customer with delivered order)
+
+
+7. FRONTEND-TO-BACKEND CONNECTION STATUS
+-----------------------------------------
+Authentication is connected now:
+- When VITE_API_URL is configured, registration and login call the Express API.
+- The frontend stores the returned JWT locally and clears it on logout.
+- When VITE_API_URL is not configured, the existing demo login remains usable
+  for UI demonstrations.
+
+The API routes for products, orders and reviews are complete and ready for
+connection. Their screens currently retain local demo state so the project is
+still demonstrable before MongoDB is configured. The next integration task is
+to replace the product/order/review functions in src/main.jsx with API calls.
+
+
+8. HOW TO RUN THE COMPLETE PROJECT
+-----------------------------------
+Prerequisites
+- Node.js 18 or newer.
+- MongoDB Community Server running locally OR a MongoDB Atlas connection URL.
+
+Step 1: Open a PowerShell terminal in the project folder.
+
+Step 2: Install frontend packages (only needed once).
+  npm.cmd install
+
+Step 3: Install backend packages (only needed once).
+  npm.cmd install --prefix backend
+
+Step 4: Create backend environment file.
+  Copy-Item backend\.env.example backend\.env
+
+Open backend\.env and set:
+- MONGODB_URI
+  Local example: mongodb://127.0.0.1:27017/fresho
+- JWT_SECRET
+  Use a long random value in a real deployment.
+- ADMIN_PASSWORD
+  Choose a private password for the administrator account.
+
+Step 5: Create frontend environment file.
+  Copy-Item .env.example .env
+
+The provided frontend value is:
+  VITE_API_URL=http://localhost:5000/api
+
+Step 6: Create the administrator account.
+  npm.cmd run api:seed
+
+Step 7: Start the backend in terminal 1.
+  npm.cmd run api:dev
+
+Expected API URL:
+  http://localhost:5000
+
+Check it in a browser:
+  http://localhost:5000/api/health
+
+Step 8: Start the frontend in terminal 2.
+  npm.cmd run dev
+
+Open the application:
+  http://localhost:5173
+
+Note for this Windows machine:
+Use npm.cmd instead of npm if PowerShell blocks npm.ps1 because of its
+execution-policy setting.
+
+
+9. VALIDATION COMPLETED
+-----------------------
+- Frontend production build passes: npm.cmd run build
+- Backend JavaScript files pass Node.js syntax checks.
+- Backend dependencies are installed.
+
+Dependency audit note:
+npm reports 5 dependency advisories (1 moderate, 4 high) in the backend
+dependency tree. Do not use "npm audit fix --force" blindly for a project
+submission; review and update packages deliberately before deployment.
