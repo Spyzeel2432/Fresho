@@ -3,21 +3,14 @@ Project: Fresho — Local Farmer Marketplace Frontend
 Purpose:
 A production-style React + Vite frontend focused on completing the UI/UX before backend integration.
 
-Technology stack:
-- React
-- Vite
-- React Router
-- Node.js / npm
-- Custom CSS design system
-- No UI framework dependency
-Run locally
-npm install
-npm run dev
-
-Then open the Vite localhost URL shown in the terminal.
-Production build
-npm run build
-npm run preview
+Tech stack
+- Frontend: React 18, JavaScript, Vite, React Router, custom CSS
+- Backend: Node.js, Express
+- Database: MongoDB with Mongoose
+- Authentication and security: JWT, bcryptjs, CORS
+- PWA: Web app manifest and service worker
+- Deployment configuration: Vercel for frontend, Render for API; MongoDB hosted separately, such as MongoDB Atlas
+- Testing artifacts: Python end-to-end test file and a test report are present in the repository
 
 Current routes
 Public
